@@ -2,9 +2,9 @@
 
 
 
-## Prerequsites 
+## Prerequisites
 
-Install and run docker and kubernetes. In case if you already have such enveronment, you can skpi this step. For local environment we will use Ubuntu 16.04.3 LTS. 
+Install and run docker and kubernetes. In case if you already have such environment, you can skip this step. For local environment we will use Ubuntu 16.04.3 LTS. 
 
 Steps are following:
 
@@ -58,7 +58,7 @@ mvn package docker:build docker:push
 
 ## Run 
 
-  The "uber" yaml will be created buring build procedure. It shall be used to launch entire example
+  The "uber" yaml will be created during build procedure. It shall be used to launch entire example
 
 ```
 kubectl create -f k8s/deploy-all.yml
@@ -91,14 +91,14 @@ kubectl expose deployment st-elasticsearch     --port=9200  --target-port=9200 -
 
 ### Runing kubernetes via minikube hints
 
-  * In case if you are facing with some issues running kubernetes via minikube try to speficy additional configuration for k8s
+  * In case if you are facing with some issues running kubernetes via minikube try to specify additional configuration for k8s
 ```  
 sudo minikube start --vm-driver=none --kubernetes-version=v1.7.5 --extra-config=apiserver.ServiceClusterIPRange=10.0.0.0/24
 ```
 
 ### Under virtual machine
 
-  * In case if services not avalable outside of VM try to check firewall and allow message forwarding. 
+  * In case if services not available outside of VM try to check firewall and allow message forwarding. 
   
 ```
 sudo iptables -t filter --policy FORWARD ACCEPT

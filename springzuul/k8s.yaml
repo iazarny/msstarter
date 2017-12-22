@@ -1,0 +1,73 @@
+########################################################################################################################
+# Deployment. Zuul and web server
+########################################################################################################################
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: st-zuul-web
+  name: st-zuul-web
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: st-zuul-web
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: st-zuul-web
+    spec:
+      containers:
+      - image: localhost:5000/st-zuul-web
+        imagePullPolicy: Always
+        name: st-zuul-web
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /application/env
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        env:
+        terminationMessagePath: /dev/termination-log
+      dnsPolicy: ClusterFirst
+      initContainers:
+      - name: init-st-eureka
+        image: busybox
+        command: ['sh', '-c', 'until nslookup st-eureka; do echo waiting for st-eureka; sleep 10; done;']
+      - name: init-st-rest
+        image: busybox
+        command: ['sh', '-c', 'until nslookup st-rest; do echo waiting for st-rest; sleep 10; done;']
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+---
+########################################################################################################################
+# Service. Zuul and Web Server
+########################################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: st-zuul-web
+  name: st-zuul-web
+  namespace: default
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    run: st-zuul-web
+  sessionAffinity: None
+  type: LoadBalancer
+
+

@@ -1,0 +1,28 @@
+info:
+  version: @version@
+
+
+spring:
+  profiles: development
+
+server:
+  port: ${PORT:8080}
+
+eureka:
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 10
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    server:
+      waitTimeInMsWhenSyncEmpty: 0
+
+logging:
+  file: logs/registry-service.log
+
+
+management:
+  security:
+    enabled: false
+

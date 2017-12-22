@@ -1,0 +1,28 @@
+info:
+  app:
+    name: Service registry
+    description: Eureka
+    version: @version@
+
+spring:
+  application:
+    name: registry-service
+  jmx:
+    default-domain: ${spring.application.name}
+    enabled: false
+#  cloud:
+#    config:
+#      uri: ${CONFIG_SERVICE_URI:http://localhost:8888}
+  profiles:
+    active: development
+---
+spring:
+  profiles: kubelocal
+  cloud:
+    config:
+      failFast: true
+      retry:
+        initialInterval: 2000
+        multiplier: 1.1
+        maxInterval: 3000
+        maxAttempts: 6

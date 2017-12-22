@@ -1,0 +1,40 @@
+info:
+  version: @version@
+
+
+spring:
+  datasource:
+    url: jdbc:mysql://st-mysql:3306/artdb
+    username: root
+    password: password
+  jpa:
+    hibernate.ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect
+#        cache.region.factory_class: org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory
+        connection.release_mode: on_close
+        globally_quoted_identifiers: true
+
+
+server:
+  port: ${PORT:8080}
+
+eureka:
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 10
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    server:
+      waitTimeInMsWhenSyncEmpty: 0
+    serviceUrl:
+      defaultZone: http://st-eureka:8080/eureka/
+
+logging:
+  file: logs/rest-service.log
+
+management:
+  security:
+    enabled: false

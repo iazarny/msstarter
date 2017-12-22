@@ -1,0 +1,52 @@
+info:
+  version: @version@
+
+
+server:
+  port: ${PORT:8080}
+
+eureka:
+  instance:
+    preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 10
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    server:
+      waitTimeInMsWhenSyncEmpty: 0
+    serviceUrl:
+      defaultZone: http://st-eureka:8080/eureka/
+
+zuul:
+  sensitiveHeaders: ''
+  routes:
+    rest-service:
+      path: /api/**
+      stripPrefix: false
+      serviceId: rest-service
+
+#zuul:
+#  sensitiveHeaders: ''
+#  routes:
+#    auth:
+#      path: /oauth/**
+#      stripPrefix: true
+#      serviceId: cg-keycloak
+#      url: http://cg-keycloak:8080/
+#    partner-service:
+#      path: /partner/**
+#      stripPrefix: false
+#      serviceId: partner-service
+#    geo-service:
+#      path: /geo/**
+#      stripPrefix: false
+#      serviceId: partner-service
+
+
+
+logging:
+  file: logs/zuul-web-service.log
+
+management:
+  security:
+    enabled: false

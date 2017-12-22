@@ -1,0 +1,14 @@
+info:
+  app:
+    name: Zuul and web service
+    description: Zuul and web service
+    version: todo
+
+spring:
+  application:
+    name: zuul-web-service
+  jmx:
+    default-domain: ${spring.application.name}
+    enabled: false
+  profiles:
+    active: development

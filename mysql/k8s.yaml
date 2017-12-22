@@ -1,0 +1,59 @@
+########################################################################################################################
+# Deployment. Postgres SQL Server
+########################################################################################################################
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: st-mysql
+  name: st-mysql
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: st-mysql
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: st-mysql
+    spec:
+      containers:
+      - image: localhost:5000/st-mysql
+        imagePullPolicy: Always
+        name: st-mysql
+        ports:
+        - containerPort: 3306
+          protocol: TCP
+        terminationMessagePath: /dev/termination-log
+      imagePullSecrets:
+        - name: stashregistry
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+---
+########################################################################################################################
+# Service. Internal. Postgres
+########################################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: st-mysql
+  name: st-mysql
+  namespace: default
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    run: st-mysql
+  sessionAffinity: None
+  type: LoadBalancer
+

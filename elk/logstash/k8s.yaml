@@ -1,0 +1,69 @@
+########################################################################################################################
+# Deployment. Logstash.
+########################################################################################################################
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: st-logstash
+  name: st-logstash
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: st-logstash
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: st-logstash
+    spec:
+      containers:
+      - image: localhost:5000/st-logstash
+        imagePullPolicy: Always
+        name: st-logstash
+        ports:
+        - containerPort: 5001
+          protocol: TCP
+          name: native-port
+        - containerPort: 5002
+          protocol: TCP
+          name: log4j-port
+        terminationMessagePath: /dev/termination-log
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+---
+########################################################################################################################
+# Service.  Logstash
+########################################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: st-logstash
+  name: st-logstash
+  namespace: default
+spec:
+  ports:
+  - name: native
+    protocol: TCP
+    port: 5001
+    targetPort: 5001
+  - name: log4j
+    protocol: TCP
+    port: 5002
+    targetPort: 5002
+  selector:
+    run: st-logstash
+  sessionAffinity: None
+  type: LoadBalancer
+
+
+

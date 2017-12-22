@@ -1,0 +1,177 @@
+<html>
+<head>
+
+    <link rel='stylesheet prefetch' href='bootstrap.min.css'>
+    <link rel='stylesheet prefetch' href='bootstrap-theme.min.css'>
+    <script src='vue.min.js'></script>
+    <script src='vue-router.min.js'></script>
+    <script src="axios.min.js"></script>
+    <script src="moment.js"></script>
+
+
+    <style class="cp-pen-styles">.logo {
+        width: 50px;
+        float: left;
+        margin-right: 15px;
+    }
+
+    .form-group {
+        max-width: 500px;
+    }
+
+    .actions {
+        padding: 10px 0;
+    }
+
+    .glyphicon-euro {
+        font-size: 12px;
+    }
+    </style>
+
+</head>
+<body>
+
+
+<div class="container">
+    <header class="page-header">
+        <div class="branding">
+            
+            <h1>Microservice starter: Spring boot 2, Vue.js, MySQL 8, Kuberneters, Docker</h1>
+        </div>
+    </header>
+    <main id="app"></main>
+</div>
+
+<template id="product-list">
+    <section>
+        <div class="actions">
+            <router-link class="btn btn-default" :to="{path: '/add-product'}">
+                <span class="glyphicon glyphicon-plus"></span>
+                Add article
+            </router-link>
+        </div>
+        <div class="filters row">
+            <div class="form-group col-sm-3">
+                <label for="search-element">Title</label>
+                <input v-model="searchKey" class="form-control" id="search-element" requred/>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Modified</th>
+                <th class="col-sm-2">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="product in filteredProducts">
+                <td>
+                    <router-link :to="{name: 'product', params: {art_id: product.id}}">{{ product.title }}
+                    </router-link>
+                </td>
+                <td>
+                    {{ product.content }}
+                    <hr/>
+                    <a :href="product.link">{{ product.link }}</a>
+
+                </td>
+                <td>
+                    {{ new Date(product.modified) }}
+                </td>
+                <td>
+                    <router-link class="btn btn-warning btn-xs"
+                                 :to="{name: 'product-edit', params: {art_id: product.id}}">Edit
+                    </router-link>
+                    <router-link class="btn btn-danger btn-xs"
+                                 :to="{name: 'product-delete', params: {art_id: product.id}}">Delete
+                    </router-link>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</template>
+
+<template id="product-edit">
+    <section>
+        <h2>Edit product</h2>
+        <form v-on:submit="updateProduct">
+            <div class="form-group">
+                <label for="edit-name">Title</label>
+                <input class="form-control" id="edit-name" v-model="product.title" required/>
+            </div>
+            <div class="form-group">
+                <label for="edit-description">Short content</label>
+                <textarea class="form-control" id="edit-description" rows="3" v-model="product.content"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="edit-description">Link</label>
+                <input class="form-control" id="edit-link" v-model="product.link"/>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <router-link :to="{path: '/'}" class="btn btn-default">Cancel</router-link>
+        </form>
+    </section>
+</template>
+
+<template id="add-product">
+    <section>
+        <h2>Add new product</h2>
+        <form v-on:submit="createProduct">
+            <div class="form-group">
+                <label for="add-name">Title</label>
+                <input class="form-control" id="add-name" v-model="product.title" required/>
+            </div>
+            <div class="form-group">
+                <label for="add-description">Content</label>
+                <textarea class="form-control" id="add-description" rows="10" v-model="product.content"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="add-link">Link</label>
+                <input class="form-control" id="add-link" v-model="product.link" required/>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+            <router-link class="btn btn-default" :to="{path: '/'}">Cancel</router-link>
+        </form>
+    </section>
+</template>
+
+<template id="product">
+    <section>
+        <h2>{{ product.title }}</h2>
+        <b>Content: </b>
+        <div>{{ product.content }}</div>
+        <b>Link:</b>
+        <div> <a :href="product.link">{{ product.link }}</a></div>
+        <b>Modified:</b>
+        <div>{{ new Date(product.modified) }}</div>
+        <br/>
+        <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+		<router-link class="btn btn-default" :to="{path: '/'}">Back</router-link>
+    </section>
+</template>
+
+
+
+<template id="product-delete">
+    <section>
+        <h2>Delete article {{ product.title }}</h2>
+        <form v-on:submit="deleteProduct">
+            <p>The action cannot be undone.</p>
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <router-link :to="{path: '/'}" class="btn btn-default">Cancel</router-link>
+        </form>
+    </section>
+</template>
+
+
+
+<script src="app.js"></script>
+
+
+
+</body>
+</html>

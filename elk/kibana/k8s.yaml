@@ -1,0 +1,62 @@
+########################################################################################################################
+# Deployment. Kibana.
+########################################################################################################################
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: st-kibana
+  name: st-kibana
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: st-kibana
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: st-kibana
+    spec:
+      containers:
+      - image: localhost:5000/st-kibana
+        imagePullPolicy: Always
+        name: st-kibana
+        ports:
+        - containerPort: 5601
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+      imagePullSecrets:
+        - name: stashregistry
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+---
+
+########################################################################################################################
+# Service. Kibana
+########################################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: st-kibana
+  name: st-kibana
+  namespace: default
+spec:
+  ports:
+  - port: 5601
+    targetPort: 5601
+  selector:
+    run: st-kibana
+  sessionAffinity: None
+  type: LoadBalancer
+---
+

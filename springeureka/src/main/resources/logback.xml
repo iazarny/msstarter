@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}registry-service-spring.log}"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+    <include resource="org/springframework/boot/logging/logback/file-appender.xml" />
+    <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>st-logstash:5001</destination>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <mdc/> <!-- MDC variables on the Thread will be written as JSON fields-->
+                <context/> <!--Outputs entries from logback's context -->
+                <version/> <!-- Logstash json format version, the @version field in the output-->
+                <logLevel/>
+                <loggerName/>
+                <pattern>
+                    <pattern>
+                        {
+                        "service": "registry-service",
+                        "type": "request"
+                        }
+                    </pattern>
+                </pattern>
+                <threadName/>
+                <message/>
+                <logstashMarkers/> <!-- Useful so we can add extra information for specific log lines as Markers-->
+                <arguments/> <!--or through StructuredArguments-->
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+        <appender-ref ref="LOGSTASH"/>
+    </root>
+</configuration>
